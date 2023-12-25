@@ -1,61 +1,129 @@
-import matplotlib.pyplot as plt
-from sklearn.cluster import BisectingKMeans, KMeans
+"""
+===================================
+Demo of DBSCAN clustering algorithm
+===================================
+
+DBSCAN (Density-Based Spatial Clustering of Applications with Noise) finds core
+samples in regions of high density and expands clusters from them. This
+algorithm is good for data which contains clusters of similar density.
+
+See the :ref:`sphx_glr_auto_examples_cluster_plot_cluster_comparison.py` example
+for a demo of different clustering algorithms on 2D datasets.
+
+"""
+
+# %%
+# Data generation
+# ---------------
+#
+# We use :class:`~sklearn.datasets.make_blobs` to create 3 synthetic clusters.
+
 from sklearn.datasets import make_blobs
+from sklearn.preprocessing import StandardScaler
 
-# Print documentation
-print(__doc__)
+centers = [[1, 1], [-1, -1], [1, -1]]
+X, labels_true = make_blobs(
+    n_samples=750, centers=centers, cluster_std=0.4, random_state=0
+)
 
-def generate_sample_data(n_samples, random_state):
-    """Generate synthetic data with two centers."""
-    return make_blobs(n_samples=n_samples, centers=2, random_state=random_state)
+X = StandardScaler().fit_transform(X)
 
-def plot_clusters(ax, X, algo, centers, n_clusters, algorithm_name):
-    """Plot clusters and centers on a given subplot."""
-    ax.scatter(X[:, 0], X[:, 1], s=10, c=algo.labels_)
-    ax.scatter(centers[:, 0], centers[:, 1], c="r", s=20)
-    ax.set_title(f"{algorithm_name} : {n_clusters} clusters")
+# %%
+# We can visualize the resulting data:
 
-def main():
-    # Parameters
-    n_samples = 10000
-    random_state = 0
-    n_clusters_list = [4, 8, 16]
+import matplotlib.pyplot as plt
 
-    # Generate sample data
-    X, _ = generate_sample_data(n_samples, random_state)
+plt.scatter(X[:, 0], X[:, 1])
+plt.show()
 
-    # Algorithms to compare
-    clustering_algorithms = {
-        "Bisecting K-Means": BisectingKMeans,
-        "K-Means": KMeans,
-    }
+# %%
+# Compute DBSCAN
+# --------------
+#
+# One can access the labels assigned by :class:`~sklearn.cluster.DBSCAN` using
+# the `labels_` attribute. Noisy samples are given the label math:`-1`.
 
-    # Make subplots for each variant
-    fig, axs = plt.subplots(
-        len(clustering_algorithms), len(n_clusters_list), figsize=(12, 5)
+import numpy as np
+
+from sklearn import metrics
+from sklearn.cluster import DBSCAN
+
+db = DBSCAN(eps=0.3, min_samples=10).fit(X)
+labels = db.labels_
+
+# Number of clusters in labels, ignoring noise if present.
+n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+n_noise_ = list(labels).count(-1)
+
+print("Estimated number of clusters: %d" % n_clusters_)
+print("Estimated number of noise points: %d" % n_noise_)
+
+# %%
+# Clustering algorithms are fundamentally unsupervised learning methods.
+# However, since :class:`~sklearn.datasets.make_blobs` gives access to the true
+# labels of the synthetic clusters, it is possible to use evaluation metrics
+# that leverage this "supervised" ground truth information to quantify the
+# quality of the resulting clusters. Examples of such metrics are the
+# homogeneity, completeness, V-measure, Rand-Index, Adjusted Rand-Index and
+# Adjusted Mutual Information (AMI).
+#
+# If the ground truth labels are not known, evaluation can only be performed
+# using the model results itself. In that case, the Silhouette Coefficient comes
+# in handy.
+#
+# For more information, see the
+# :ref:`sphx_glr_auto_examples_cluster_plot_adjusted_for_chance_measures.py`
+# example or the :ref:`clustering_evaluation` module.
+
+print(f"Homogeneity: {metrics.homogeneity_score(labels_true, labels):.3f}")
+print(f"Completeness: {metrics.completeness_score(labels_true, labels):.3f}")
+print(f"V-measure: {metrics.v_measure_score(labels_true, labels):.3f}")
+print(f"Adjusted Rand Index: {metrics.adjusted_rand_score(labels_true, labels):.3f}")
+print(
+    "Adjusted Mutual Information:"
+    f" {metrics.adjusted_mutual_info_score(labels_true, labels):.3f}"
+)
+print(f"Silhouette Coefficient: {metrics.silhouette_score(X, labels):.3f}")
+
+# %%
+# Plot results
+# ------------
+#
+# Core samples (large dots) and non-core samples (small dots) are color-coded
+# according to the assigned cluster. Samples tagged as noise are represented in
+# black.
+
+unique_labels = set(labels)
+core_samples_mask = np.zeros_like(labels, dtype=bool)
+core_samples_mask[db.core_sample_indices_] = True
+
+colors = [plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))]
+for k, col in zip(unique_labels, colors):
+    if k == -1:
+        # Black used for noise.
+        col = [0, 0, 0, 1]
+
+    class_member_mask = labels == k
+
+    xy = X[class_member_mask & core_samples_mask]
+    plt.plot(
+        xy[:, 0],
+        xy[:, 1],
+        "o",
+        markerfacecolor=tuple(col),
+        markeredgecolor="k",
+        markersize=14,
     )
 
-    axs = axs.T
+    xy = X[class_member_mask & ~core_samples_mask]
+    plt.plot(
+        xy[:, 0],
+        xy[:, 1],
+        "o",
+        markerfacecolor=tuple(col),
+        markeredgecolor="k",
+        markersize=6,
+    )
 
-    # Compare clustering algorithms
-    for i, (algorithm_name, Algorithm) in enumerate(clustering_algorithms.items()):
-        for j, n_clusters in enumerate(n_clusters_list):
-            # Initialize and fit the algorithm
-            algo = Algorithm(n_clusters=n_clusters, random_state=random_state, n_init=3)
-            algo.fit(X)
-            centers = algo.cluster_centers_
-
-            # Plot clusters on the current subplot
-            plot_clusters(axs[j, i], X, algo, centers, n_clusters, algorithm_name)
-
-    # Hide x labels and tick labels for top plots and y ticks for right plots.
-    for ax in axs.flat:
-        ax.label_outer()
-        ax.set_xticks([])
-        ax.set_yticks([])
-
-    # Show the plot
-    plt.show()
-
-if __name__ == "__main__":
-    main()
+plt.title(f"Estimated number of clusters: {n_clusters_}")
+plt.show()
