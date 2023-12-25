@@ -27,7 +27,7 @@ def apply_dbscan(X, eps=0.3, min_samples=10):
     print("Estimated number of clusters: %d" % n_clusters_)
     print("Estimated number of noise points: %d" % n_noise_)
 
-    return labels, n_clusters_
+    return labels, n_clusters_, db
 
 def evaluate_clusters(labels_true, labels, X):
     # Evaluation metrics
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     X, labels_true = generate_synthetic_data()
     visualize_data(X)
 
-    labels, n_clusters_ = apply_dbscan(X, eps=0.3, min_samples=10)
+    labels, n_clusters_, db = apply_dbscan(X, eps=0.3, min_samples=10)
 
     evaluate_clusters(labels_true, labels, X)
 
