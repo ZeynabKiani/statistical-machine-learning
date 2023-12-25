@@ -33,6 +33,27 @@ For each algorithm and number of clusters combination, the script plots the data
 Observe the differences in clustering behavior between Regular K-Means and Bisecting K-Means. Pay attention to the presence of a dividing line cutting the overall data cloud in two for Bisecting K-Means, which is not present for Regular K-Means.
 
 Feel free to explore and modify the script to suit your needs or use it as a starting point for further analysis.
+# Bisecting K-Means and Regular K-Means Performance Comparison
+
+![Bisecting K-Means vs Regular K-Means](sphx_glr_plot_bisect_kmeans_001.png)
+
+## Description
+
+This example demonstrates the differences between the Regular K-Means algorithm and the Bisecting K-Means algorithm using synthetic data.
+
+While K-Means clusterings vary when increasing `n_clusters`, Bisecting K-Means clustering builds on top of the previous ones. Consequently, it tends to create clusters with a more regular large-scale structure. This difference is visually observable: for all numbers of clusters, there is a dividing line cutting the overall data cloud in two for Bisecting K-Means, which is not present for regular K-Means.
+
+## Clustering Configurations
+
+- **Bisecting K-Means:**
+  - 4 clusters
+  - 8 clusters
+  - 16 clusters
+
+- **Regular K-Means:**
+  - 4 clusters
+  - 8 clusters
+  - 16 clusters
 
 ## Contributing
 
