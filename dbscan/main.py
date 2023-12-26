@@ -7,9 +7,9 @@ from sklearn.cluster import DBSCAN
 
 class DBSCANDemo:
     def __init__(self):
-        self.X, self.labels_true = self.generate_synthetic_data()
+        self.X, self.labels_true = self._generate_synthetic_data()
 
-    def generate_synthetic_data(self):
+    def _generate_synthetic_data(self):
         # Data generation
         centers = [[1, 1], [-1, -1], [1, -1]]
         X, labels_true = make_blobs(n_samples=750, centers=centers, cluster_std=0.4, random_state=0)
