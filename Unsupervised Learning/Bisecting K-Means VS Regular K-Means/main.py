@@ -17,40 +17,30 @@ def plot_clusters(ax, X, algo, centers, n_clusters, algorithm_name):
 
 def compare_clustering_algorithms(X, random_state, n_clusters_list, clustering_algorithms):
     """Compare different clustering algorithms and plot the results."""
-    # Make subplots for each variant
     fig, axs = plt.subplots(len(clustering_algorithms), len(n_clusters_list), figsize=(12, 5))
     axs = axs.T
 
-    # Compare clustering algorithms
     for i, (algorithm_name, Algorithm) in enumerate(clustering_algorithms.items()):
         for j, n_clusters in enumerate(n_clusters_list):
-            # Initialize and fit the algorithm
             algo = Algorithm(n_clusters=n_clusters, random_state=random_state, n_init=3)
             algo.fit(X)
             centers = algo.cluster_centers_
-
-            # Plot clusters on the current subplot
             plot_clusters(axs[j, i], X, algo, centers, n_clusters, algorithm_name)
 
-    # Hide x labels and tick labels for top plots and y ticks for right plots.
     for ax in axs.flat:
         ax.label_outer()
         ax.set_xticks([])
         ax.set_yticks([])
 
-    # Show the plot
     plt.show()
 
 def main():
-    # Parameters
     n_samples = 10000
     random_state = 0
     n_clusters_list = [4, 8, 16]
 
-    # Generate sample data
     X, _ = generate_sample_data(n_samples, random_state)
 
-    # Algorithms to compare
     clustering_algorithms = {
         "Bisecting K-Means": BisectingKMeans,
         "K-Means": KMeans,
@@ -59,5 +49,4 @@ def main():
     compare_clustering_algorithms(X, random_state, n_clusters_list, clustering_algorithms)
 
 if __name__ == "__main__":
-    
     main()
