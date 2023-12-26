@@ -59,4 +59,5 @@ def main():
     compare_clustering_algorithms(X, random_state, n_clusters_list, clustering_algorithms)
 
 if __name__ == "__main__":
+    
     main()
