@@ -5,68 +5,71 @@ from sklearn.preprocessing import StandardScaler
 from sklearn import metrics
 from sklearn.cluster import DBSCAN
 
-def generate_synthetic_data():
-    # Data generation
-    centers = [[1, 1], [-1, -1], [1, -1]]
-    X, labels_true = make_blobs(n_samples=750, centers=centers, cluster_std=0.4, random_state=0)
-    X = StandardScaler().fit_transform(X)
-    return X, labels_true
+class DBSCANDemo:
+    def __init__(self):
+        self.X, self.labels_true = self.generate_synthetic_data()
 
-def visualize_data(X):
-    # Visualization of the resulting data
-    plt.scatter(X[:, 0], X[:, 1])
-    plt.show()
+    def generate_synthetic_data(self):
+        # Data generation
+        centers = [[1, 1], [-1, -1], [1, -1]]
+        X, labels_true = make_blobs(n_samples=750, centers=centers, cluster_std=0.4, random_state=0)
+        X = StandardScaler().fit_transform(X)
+        return X, labels_true
 
-def apply_dbscan(X, eps=0.3, min_samples=10):
-    # Compute DBSCAN
-    db = DBSCAN(eps=eps, min_samples=min_samples).fit(X)
-    labels = db.labels_
-    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-    n_noise_ = list(labels).count(-1)
+    def visualize_data(self):
+        # Visualization of the resulting data
+        plt.scatter(self.X[:, 0], self.X[:, 1])
+        plt.show()
 
-    print("Estimated number of clusters: %d" % n_clusters_)
-    print("Estimated number of noise points: %d" % n_noise_)
+    def apply_dbscan(self, eps=0.3, min_samples=10):
+        # Compute DBSCAN
+        db = DBSCAN(eps=eps, min_samples=min_samples).fit(self.X)
+        labels = db.labels_
+        n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+        n_noise_ = list(labels).count(-1)
 
-    return labels, n_clusters_, db
+        print("Estimated number of clusters: %d" % n_clusters_)
+        print("Estimated number of noise points: %d" % n_noise_)
 
-def evaluate_clusters(labels_true, labels, X):
-    # Evaluation metrics
-    print(f"Homogeneity: {metrics.homogeneity_score(labels_true, labels):.3f}")
-    print(f"Completeness: {metrics.completeness_score(labels_true, labels):.3f}")
-    print(f"V-measure: {metrics.v_measure_score(labels_true, labels):.3f}")
-    print(f"Adjusted Rand Index: {metrics.adjusted_rand_score(labels_true, labels):.3f}")
-    print("Adjusted Mutual Information:"
-          f" {metrics.adjusted_mutual_info_score(labels_true, labels):.3f}")
-    print(f"Silhouette Coefficient: {metrics.silhouette_score(X, labels):.3f}")
+        return labels, n_clusters_, db
 
-def plot_results(X, labels, db):
-    # Plot results
-    unique_labels = set(labels)
-    core_samples_mask = np.zeros_like(labels, dtype=bool)
-    core_samples_mask[db.core_sample_indices_] = True
+    def evaluate_clusters(self, labels):
+        # Evaluation metrics
+        print(f"Homogeneity: {metrics.homogeneity_score(self.labels_true, labels):.3f}")
+        print(f"Completeness: {metrics.completeness_score(self.labels_true, labels):.3f}")
+        print(f"V-measure: {metrics.v_measure_score(self.labels_true, labels):.3f}")
+        print(f"Adjusted Rand Index: {metrics.adjusted_rand_score(self.labels_true, labels):.3f}")
+        print("Adjusted Mutual Information:"
+              f" {metrics.adjusted_mutual_info_score(self.labels_true, labels):.3f}")
+        print(f"Silhouette Coefficient: {metrics.silhouette_score(self.X, labels):.3f}")
 
-    colors = [plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))]
-    for k, col in zip(unique_labels, colors):
-        if k == -1:
-            col = [0, 0, 0, 1]
+    def plot_results(self, labels, db):
+        # Plot results
+        unique_labels = set(labels)
+        core_samples_mask = np.zeros_like(labels, dtype=bool)
+        core_samples_mask[db.core_sample_indices_] = True
 
-        class_member_mask = labels == k
+        colors = [plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))]
+        for k, col in zip(unique_labels, colors):
+            if k == -1:
+                col = [0, 0, 0, 1]
 
-        xy = X[class_member_mask & core_samples_mask]
-        plt.plot(xy[:, 0], xy[:, 1], "o", markerfacecolor=tuple(col), markeredgecolor="k", markersize=14)
+            class_member_mask = labels == k
 
-        xy = X[class_member_mask & ~core_samples_mask]
-        plt.plot(xy[:, 0], xy[:, 1], "o", markerfacecolor=tuple(col), markeredgecolor="k", markersize=6)
+            xy = self.X[class_member_mask & core_samples_mask]
+            plt.plot(xy[:, 0], xy[:, 1], "o", markerfacecolor=tuple(col), markeredgecolor="k", markersize=14)
 
-    plt.title(f"Estimated number of clusters: {n_clusters_}")
-    plt.show()
+            xy = self.X[class_member_mask & ~core_samples_mask]
+            plt.plot(xy[:, 0], xy[:, 1], "o", markerfacecolor=tuple(col), markeredgecolor="k", markersize=6)
+
+        plt.title(f"Estimated number of clusters: {n_clusters_}")
+        plt.show()
 
 if __name__ == "__main__":
-    X, labels_true = generate_synthetic_data()
-    visualize_data(X)
+    dbscan_demo = DBSCANDemo()
+    dbscan_demo.visualize_data()
 
-    labels, n_clusters_, db = apply_dbscan(X, eps=0.3, min_samples=10)
+    labels, n_clusters_, db = dbscan_demo.apply_dbscan(eps=0.3, min_samples=10)
 
-    evaluate_clusters(labels_true, labels, X)
-
-    plot_results(X, labels, db)
+    dbscan_demo.evaluate_clusters(labels)
+    dbscan_demo.plot_results(labels, db)
