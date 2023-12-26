@@ -28,8 +28,8 @@ class DBSCANDemo:
         n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
         n_noise_ = list(labels).count(-1)
 
-        print("Estimated number of clusters: %d" % n_clusters_)
-        print("Estimated number of noise points: %d" % n_noise_)
+        print(f"Estimated number of clusters: {n_clusters_}")
+        print(f"Estimated number of noise points: {n_noise_}")
 
         return labels, n_clusters_, db
 
@@ -39,8 +39,7 @@ class DBSCANDemo:
         print(f"Completeness: {metrics.completeness_score(self.labels_true, labels):.3f}")
         print(f"V-measure: {metrics.v_measure_score(self.labels_true, labels):.3f}")
         print(f"Adjusted Rand Index: {metrics.adjusted_rand_score(self.labels_true, labels):.3f}")
-        print("Adjusted Mutual Information:"
-              f" {metrics.adjusted_mutual_info_score(self.labels_true, labels):.3f}")
+        print(f"Adjusted Mutual Information: {metrics.adjusted_mutual_info_score(self.labels_true, labels):.3f}")
         print(f"Silhouette Coefficient: {metrics.silhouette_score(self.X, labels):.3f}")
 
     def plot_results(self, labels, db):
