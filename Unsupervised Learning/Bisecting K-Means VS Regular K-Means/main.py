@@ -2,9 +2,6 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import BisectingKMeans, KMeans
 from sklearn.datasets import make_blobs
 
-# Print documentation
-print(__doc__)
-
 def generate_sample_data(n_samples, random_state):
     """Generate synthetic data with two centers."""
     return make_blobs(n_samples=n_samples, centers=2, random_state=random_state)
@@ -12,7 +9,6 @@ def generate_sample_data(n_samples, random_state):
 def plot_clusters(ax, X, algo, centers, n_clusters, algorithm_name):
     """Plot clusters and centers on a given subplot."""
     ax.scatter(X[:, 0], X[:, 1], s=10, c=algo.labels_)
-
     ax.scatter(centers[:, 0], centers[:, 1], c="r", s=20)
     ax.set_title(f"{algorithm_name} : {n_clusters} clusters")
 
