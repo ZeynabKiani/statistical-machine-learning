@@ -12,7 +12,6 @@ class DBSCANDemo:
     def _generate_synthetic_data(self):
         # Generate synthetic data
         centers = [[1, 1], [-1, -1], [1, -1]]
-        
         X, labels_true = make_blobs(n_samples=750, centers=centers, cluster_std=0.4, random_state=0)
         X = StandardScaler().fit_transform(X)
         return X, labels_true
@@ -65,7 +64,7 @@ class DBSCANDemo:
         plt.title(f"Estimated number of clusters: {n_clusters_}")
         plt.show()
 
-if __name__ == "__main__":
+def run_dbscan_demo():
     dbscan_demo = DBSCANDemo()
     dbscan_demo.visualize_data()
 
@@ -73,3 +72,6 @@ if __name__ == "__main__":
 
     dbscan_demo.evaluate_clusters(labels)
     dbscan_demo.plot_results(labels, db)
+
+if __name__ == "__main__":
+    run_dbscan_demo()
