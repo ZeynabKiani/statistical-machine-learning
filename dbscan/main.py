@@ -4,6 +4,7 @@ from sklearn.datasets import make_blobs
 from sklearn.preprocessing import StandardScaler
 from sklearn import metrics
 from sklearn.cluster import DBSCAN
+import os
 
 class DBSCANDemo:
     def __init__(self):
