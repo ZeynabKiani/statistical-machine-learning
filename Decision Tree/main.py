@@ -30,16 +30,16 @@ def plot_results(X, y, X_test):
 def main():
     X, y = generate_random_dataset()
 
-    max_depth_1 = 2
-    max_depth_2 = 5
+    depth_low = 2
+    depth_high = 5
 
-    regr_1 = train_decision_tree(X, y, max_depth_1)
-    regr_2 = train_decision_tree(X, y, max_depth_2)
+    regr_low = train_decision_tree(X, y, depth_low)
+    regr_high = train_decision_tree(X, y, depth_high)
 
     X_test = np.arange(0.0, 5.0, 0.01)[:, np.newaxis]
 
-    predict_and_plot(regr_1, X_test, label=max_depth_1, color="cornflowerblue")
-    predict_and_plot(regr_2, X_test, label=max_depth_2, color="yellowgreen")
+    predict_and_plot(regr_low, X_test, label=depth_low, color="cornflowerblue")
+    predict_and_plot(regr_high, X_test, label=depth_high, color="yellowgreen")
 
     plot_results(X, y, X_test)
 
