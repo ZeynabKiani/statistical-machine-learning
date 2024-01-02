@@ -10,12 +10,12 @@ def generate_random_dataset():
     return X, y
 
 def train_decision_tree(X, y, max_depth):
-    regr = DecisionTreeRegressor(max_depth=max_depth)
-    regr.fit(X, y)
-    return regr
+    regressor = DecisionTreeRegressor(max_depth=max_depth)
+    regressor.fit(X, y)
+    return regressor
 
-def predict_and_plot(regr, X_test, label, color):
-    y_pred = regr.predict(X_test)
+def predict_and_plot(regressor, X_test, label, color):
+    y_pred = regressor.predict(X_test)
     plt.plot(X_test, y_pred, color=color, label=f"max_depth={label}", linewidth=2)
 
 def plot_results(X, y, X_test):
@@ -33,13 +33,13 @@ def main():
     depth_low = 2
     depth_high = 5
 
-    regr_low = train_decision_tree(X, y, depth_low)
-    regr_high = train_decision_tree(X, y, depth_high)
+    regressor_low = train_decision_tree(X, y, depth_low)
+    regressor_high = train_decision_tree(X, y, depth_high)
 
     X_test = np.arange(0.0, 5.0, 0.01)[:, np.newaxis]
 
-    predict_and_plot(regr_low, X_test, label=depth_low, color="cornflowerblue")
-    predict_and_plot(regr_high, X_test, label=depth_high, color="yellowgreen")
+    predict_and_plot(regressor_low, X_test, label=depth_low, color="cornflowerblue")
+    predict_and_plot(regressor_high, X_test, label=depth_high, color="yellowgreen")
 
     plot_results(X, y, X_test)
 
