@@ -4,7 +4,7 @@ from sklearn.tree import DecisionTreeRegressor
 
 def generate_random_dataset():
 
-    
+
     rng = np.random.RandomState(1)
     X = np.sort(5 * rng.rand(80, 1), axis=0)
     y = np.sin(X).ravel()
