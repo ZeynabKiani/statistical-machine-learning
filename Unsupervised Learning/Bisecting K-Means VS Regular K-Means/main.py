@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+
 from sklearn.cluster import BisectingKMeans, KMeans
 from sklearn.datasets import make_blobs
 
