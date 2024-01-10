@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from sklearn.cluster import BisectingKMeans, KMeans
-
 from sklearn.datasets import make_blobs
 
 def generate_sample_data(n_samples, random_state):
